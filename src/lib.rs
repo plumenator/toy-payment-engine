@@ -1,5 +1,8 @@
+pub mod account;
 pub mod csv;
 pub(crate) mod model;
+
+use account::{Balance, Ledger};
 
 impl From<crate::csv::Client> for model::Client {
     fn from(src: crate::csv::Client) -> Self {
@@ -87,6 +90,20 @@ impl crate::csv::TxRecord {
             }
         };
         Ok(txn)
+    }
+}
+
+pub fn print_accounts(accounts: &Ledger) {
+    for (
+        client,
+        Balance {
+            available,
+            held,
+            locked,
+        },
+    ) in &accounts.balances
+    {
+        println!("{:?}:{:?},{:?},{:?}", client, available, held, locked);
     }
 }
 
