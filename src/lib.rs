@@ -93,13 +93,17 @@ impl crate::csv::TxRecord {
     }
 }
 
+const PRECISION: u32 = 4;
+
 impl crate::csv::LedgerRecord {
     fn from_balance(client: &model::Client, balance: &Balance) -> Self {
+        let available = balance.available.0.round_dp(PRECISION);
+        let held = balance.held.0.round_dp(PRECISION);
         Self {
             client: csv::Client(client.0),
-            available: csv::Amount(balance.available.0),
-            held: csv::Amount(balance.held.0),
-            total: csv::Amount(balance.available.0 + balance.held.0),
+            available: csv::Amount(available),
+            held: csv::Amount(held),
+            total: csv::Amount((available + held).round_dp(PRECISION)),
             locked: balance.locked,
         }
     }
