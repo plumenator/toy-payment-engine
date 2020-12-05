@@ -8,7 +8,7 @@ pub struct TxRecord {
     tx_type: String,
     client: u16,
     tx: u32,
-    amount: String,
+    amount: Option<String>,
 }
 
 pub fn read_tx(reader: impl io::Read) -> impl Iterator<Item = Result<TxRecord, csv::Error>> {
@@ -27,7 +27,10 @@ mod tests {
                      deposit,2,2,2.0\n\
                      deposit,1,3,2.0\n\
                      withdrawal,1,4,1.5\n\
-                     withdrawal,2,5,3.0\n"
+                     withdrawal,2,5,3.0\n
+                     dispute,2,5,\n
+                     chargeback,2,5,\n
+                     resolve,2,5,\n"
             .as_bytes();
 
         let result: Result<Vec<_>, _> = read_tx(input).collect();
