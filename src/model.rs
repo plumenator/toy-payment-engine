@@ -41,11 +41,11 @@ pub struct Chargeback {
     pub(crate) tx: Tx,
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
 pub(crate) struct Client(pub(crate) u16);
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
 pub(crate) struct Tx(pub(crate) u32);
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub(crate) struct Amount(pub(crate) Decimal);
