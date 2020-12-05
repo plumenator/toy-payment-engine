@@ -12,8 +12,11 @@ fn main() -> io::Result<()> {
     }
     let input_path = std::path::Path::new(&args[1]);
     let input_file = std::fs::File::open(input_path)?;
-    for tx_record in read_tx(input_file) {
-        println!("{:#?}", tx_record?);
+    for txn in read_tx(input_file).map(|rtxr| {
+        rtxr.map_err(|e| io::Error::new(io::ErrorKind::Other, e))
+            .and_then(|txr| txr.into_transaction())
+    }) {
+        println!("{:#?}", txn?);
     }
     Ok(())
 }

@@ -6,15 +6,15 @@ use serde::Deserialize;
 #[derive(Debug, Deserialize)]
 pub struct TxRecord {
     #[serde(alias = "type")]
-    tx_type: TxType,
-    client: Client,
-    tx: Tx,
-    amount: Option<Amount>,
+    pub(crate) tx_type: TxType,
+    pub(crate) client: Client,
+    pub(crate) tx: Tx,
+    pub(crate) amount: Option<Amount>,
 }
 
 #[derive(Debug, Deserialize)]
 #[serde(rename_all = "lowercase")]
-enum TxType {
+pub(crate) enum TxType {
     Deposit,
     Withdrawal,
     Dispute,
@@ -23,13 +23,13 @@ enum TxType {
 }
 
 #[derive(Debug, Deserialize)]
-struct Client(u16);
+pub(crate) struct Client(pub(crate) u16);
 
 #[derive(Debug, Deserialize)]
-struct Tx(u32);
+pub(crate) struct Tx(pub(crate) u32);
 
 #[derive(Debug, Deserialize)]
-struct Amount(Decimal);
+pub(crate) struct Amount(pub(crate) Decimal);
 
 pub fn read_tx(reader: impl io::Read) -> impl Iterator<Item = Result<TxRecord, csv::Error>> {
     let rdr = csv::Reader::from_reader(reader);
