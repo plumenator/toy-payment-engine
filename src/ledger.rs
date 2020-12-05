@@ -100,7 +100,6 @@ impl Ledger {
                 })?;
                 self.disputes
                     .insert((dispute.client, dispute.tx), amount.clone());
-
                 self.balances
                     .get_mut(&dispute.client)
                     .expect("client with disputed transaction should exist")
