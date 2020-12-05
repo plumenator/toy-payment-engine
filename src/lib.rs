@@ -1,8 +1,8 @@
-pub mod account;
 pub mod csv;
+pub mod ledger;
 pub(crate) mod model;
 
-use account::{Balance, Ledger};
+use ledger::{Balance, Ledger};
 
 impl From<crate::csv::Client> for model::Client {
     fn from(src: crate::csv::Client) -> Self {
@@ -109,10 +109,10 @@ impl crate::csv::LedgerRecord {
     }
 }
 
-pub fn print_accounts(accounts: &Ledger) {
+pub fn print_ledger(ledger: &Ledger) {
     csv::write_ledger(
         std::io::stdout(),
-        accounts
+        ledger
             .balances
             .iter()
             .map(|(client, balance)| csv::LedgerRecord::from_balance(client, balance)),

@@ -141,11 +141,11 @@ mod tests {
     use crate::model::*;
 
     fn balances(txns: &[Transaction]) -> Result<HashMap<Client, Balance>, std::io::Error> {
-        let mut accounts = Ledger::default();
+        let mut ledger = Ledger::default();
         for txn in txns {
-            accounts.update(txn)?;
+            ledger.update(txn)?;
         }
-        Ok(accounts.balances)
+        Ok(ledger.balances)
     }
 
     #[test]
