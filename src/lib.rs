@@ -93,18 +93,31 @@ impl crate::csv::TxRecord {
     }
 }
 
-pub fn print_accounts(accounts: &Ledger) {
-    for (
-        client,
-        Balance {
-            available,
-            held,
-            locked,
-        },
-    ) in &accounts.balances
-    {
-        println!("{:?}:{:?},{:?},{:?}", client, available, held, locked);
+const PRECISION: u32 = 4;
+
+impl crate::csv::LedgerRecord {
+    fn from_balance(client: &model::Client, balance: &Balance) -> Self {
+        let available = balance.available.0.round_dp(PRECISION);
+        let held = balance.held.0.round_dp(PRECISION);
+        Self {
+            client: csv::Client(client.0),
+            available: csv::Amount(available),
+            held: csv::Amount(held),
+            total: csv::Amount((available + held).round_dp(PRECISION)),
+            locked: balance.locked,
+        }
     }
+}
+
+pub fn print_accounts(accounts: &Ledger) {
+    csv::write_ledger(
+        std::io::stdout(),
+        accounts
+            .balances
+            .iter()
+            .map(|(client, balance)| csv::LedgerRecord::from_balance(client, balance)),
+    )
+    .expect("able to write to stdout")
 }
 
 #[cfg(test)]

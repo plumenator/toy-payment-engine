@@ -1,7 +1,7 @@
 use std::io;
 
 use rust_decimal::Decimal;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize)]
 pub struct TxRecord {
@@ -22,18 +22,38 @@ pub(crate) enum TxType {
     Chargeback,
 }
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Serialize)]
+pub(crate) struct LedgerRecord {
+    pub(crate) client: Client,
+    pub(crate) available: Amount,
+    pub(crate) held: Amount,
+    pub(crate) total: Amount,
+    pub(crate) locked: bool,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
 pub(crate) struct Client(pub(crate) u16);
 
 #[derive(Debug, Deserialize)]
 pub(crate) struct Tx(pub(crate) u32);
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Serialize)]
 pub(crate) struct Amount(pub(crate) Decimal);
 
 pub fn read_tx(reader: impl io::Read) -> impl Iterator<Item = Result<TxRecord, csv::Error>> {
     let rdr = csv::Reader::from_reader(reader);
     rdr.into_deserialize()
+}
+
+pub(crate) fn write_ledger(
+    writer: impl io::Write,
+    records: impl Iterator<Item = LedgerRecord>,
+) -> Result<(), csv::Error> {
+    let mut wtr = csv::Writer::from_writer(writer);
+    for record in records {
+        wtr.serialize(record)?
+    }
+    Ok(())
 }
 
 #[cfg(test)]
