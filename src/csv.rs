@@ -9,7 +9,7 @@ pub struct TxRecord {
     pub(crate) tx_type: TxType,
     pub(crate) client: Client,
     pub(crate) tx: Tx,
-    pub(crate) amount: Option<Amount>,
+    pub(crate) amount: Option<Amount>, // TODO: ensure non negative
 }
 
 #[derive(Debug, Deserialize)]
